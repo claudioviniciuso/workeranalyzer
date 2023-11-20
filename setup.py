@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='worker_analyzer',
     version='0.1.0',
-    description='Your package description',
+    description='Package for analyze and monitoring worker performance',
     author='Claudio Vinicius Oliveira',
     author_email='claudiovinicius.o@hotmail.com',
     packages=find_packages(),
