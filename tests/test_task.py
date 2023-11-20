@@ -1,7 +1,7 @@
 import uuid
 import pytest
 from datetime import datetime
-from worker_analyzer.task import Task
+from worker_analyzer.analyzer import Task
 
 def test_task_initialization():
     task = Task("task1")

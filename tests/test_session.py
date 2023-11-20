@@ -1,7 +1,7 @@
 import uuid
 import pytest
 from datetime import datetime
-from worker_analyzer.session import Session
+from worker_analyzer.analyzer import Session
 
 def test_session_initialization():
     session = Session()

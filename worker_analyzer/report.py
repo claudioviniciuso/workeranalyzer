@@ -1,12 +1,11 @@
 import pandas as pd
-from datetime import datetime
 from copy import deepcopy
 
-class Report:
+class DefaultReport:
     def __init__(self, session:dict) -> None:
         if not isinstance(session, dict):
             raise TypeError("Expected dictionary for 'session'")
-        self.data = pd.DataFrame(session)
+        self.data = pd.DataFrame([session])
         self.tasks_data = self.process_tasks_data()
 
     def process_tasks_data(self):
@@ -25,7 +24,7 @@ class Report:
         session_id = self.data['id'].iloc[0]
         start_time = pd.to_datetime(self.data['start_time'].iloc[0])
         end_time = pd.to_datetime(self.data['end_time'].iloc[0])
-        duration = (end_time - start_time).total_seconds() if pd.notnull(start_time) and pd.notnull(end_time) else None
+        duration = self.data['duration'].iloc[0]
 
         report = {
             "Session ID": session_id,

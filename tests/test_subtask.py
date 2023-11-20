@@ -1,7 +1,7 @@
 import uuid
 import pytest
 from datetime import datetime
-from worker_analyzer.subtask import SubTask
+from worker_analyzer.analyzer import SubTask
 
 def test_subtask_initialization():
     subtask = SubTask("subtask1", "test_type")
