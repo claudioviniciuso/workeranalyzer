@@ -108,3 +108,21 @@ def test_end_session_before_start():
     session = Session()
     with pytest.raises(Exception):
         session.end()  # Testando finalizar sessão antes de iniciar
+    
+def test_save_session_without_storage_path():
+    session = Session()
+    session.start()
+    task = {
+        "name": "task1",
+        "start_time": datetime.now(),
+        "end_time": datetime.now(),
+        "duration": 1,
+        "status": "Success",
+        "subtasks": [],
+        "id": str(uuid.uuid4())
+        }
+    session.add_task(task)
+    session.add_attribute("test_key", "test_value")
+    session.end()
+    with pytest.raises(Exception):
+        session.save()  # Testando salvar sessão sem definir o caminho de armazenamento

@@ -120,6 +120,9 @@ class Session:
         storage_path = os.getenv(
             "WORKER_ANALYZER_STORAGE_PATH", "/default/path/if/not/set"
         )
+        if not storage_path:
+            raise Exception("Storage path not set")
+        
         file_path = os.path.join(storage_path, "tmp_session.json")
         try:
             session_save = self.session
@@ -142,6 +145,9 @@ class Session:
         storage_path = os.getenv(
             "WORKER_ANALYZER_STORAGE_PATH", "/default/path/if/not/set"
         )
+        if not storage_path:
+            raise Exception("Storage path not set")
+
         file_path = os.path.join(storage_path, "tmp_session.json")
         try:
             with open(file_path, "r") as f:
