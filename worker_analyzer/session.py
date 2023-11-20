@@ -22,8 +22,8 @@ class Session:
         """
         return {
             "id": self.id,
-            "start_time": self.start_time,
-            "end_time": self.end_time,
+            "start_time": self.start_time.isoformat() if self.start_time is not None else None,
+            "end_time": self.end_time.isoformat() if self.end_time is not None else None,
             "duration": self.duration,
             "status": self.status,
             "custom_attributes": self.custom_attributes,
@@ -126,16 +126,6 @@ class Session:
         file_path = os.path.join(storage_path, "tmp_session.json")
         try:
             session_save = self.session
-            session_save["start_time"] = (
-                session_save["start_time"].isoformat()
-                if session_save["start_time"]
-                else None
-            )
-            session_save["end_time"] = (
-                session_save["end_time"].isoformat()
-                if session_save["end_time"]
-                else None
-            )
             with open(file_path, "w") as f:
                 json.dump(session_save, f)
         except Exception as e:

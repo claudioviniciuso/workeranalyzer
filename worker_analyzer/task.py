@@ -29,8 +29,8 @@ class Task:
         task = {
             "id": self.id,
             "name": self.name,
-            "start_time": self.start_time,
-            "end_time": self.end_time,
+            "start_time": self.start_time.isoformat() if self.start_time is not None else None,
+            "end_time": self.end_time.isoformat() if self.end_time is not None else None,
             "duration": self.duration,
             "status": self.status,
             "subtasks": self.subtasks,

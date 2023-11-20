@@ -75,8 +75,8 @@ def test_task():
     task_dict = task.task
     assert task_dict["id"] == task.id
     assert task_dict["name"] == task.name
-    assert task_dict["start_time"] == task.start_time
-    assert task_dict["end_time"] == task.end_time
+    assert task_dict["start_time"] == task.start_time.isoformat()
+    assert task_dict["end_time"] == task.end_time.isoformat()
     assert task_dict["duration"] == task.duration
     assert task_dict["status"] == task.status
     assert task_dict["subtasks"] == task.subtasks
@@ -96,7 +96,7 @@ def test_task_with_subtasks():
     task_dict = task.task
     assert task_dict["id"] == task.id
     assert task_dict["name"] == task.name
-    assert task_dict["start_time"] == task.start_time
+    assert task_dict["start_time"] == task.start_time.isoformat()
     assert task_dict["end_time"] == task.end_time
     assert task_dict["duration"] == task.duration
     assert task_dict["status"] == task.status

@@ -65,7 +65,7 @@ def test_add_task():
     with pytest.raises(Exception):
         session.add_task("task")  # Testando adição de tarefa após finalizar sessão
 
-def test_add_task_diferente_type():
+def test_add_task_diferent_type():
     session = Session()
     session.start()
     with pytest.raises(Exception):
@@ -89,8 +89,8 @@ def test_save_session():
     session.end()
     assert session.session == {
         "id": session.id,
-        "start_time": session.start_time,
-        "end_time": session.end_time,
+        "start_time": session.start_time.isoformat(),
+        "end_time": session.end_time.isoformat(),
         "duration": session.duration,
         "status": session.status,
         "custom_attributes": session.custom_attributes,
