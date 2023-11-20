@@ -82,10 +82,6 @@ class Session:
 
         if not isinstance(task["name"], str):
             raise TypeError("Expected string for 'name'")
-        if not isinstance(task["start_time"], datetime):
-            raise TypeError("Expected datetime for 'start_time'")
-        if not isinstance(task["end_time"], datetime):
-            raise TypeError("Expected datetime for 'end_time'")
         if not isinstance(task["status"], str):
             raise TypeError("Expected string for 'status'")
         if not isinstance(task["duration"], (int, float)):
@@ -222,10 +218,6 @@ class Task:
                 )
         if not isinstance(subtask["name"], str):
             raise Exception("Task name must be a string")
-        if not isinstance(subtask["start_time"], datetime):
-            raise Exception("Task start_time must be a datetime object")
-        if not isinstance(subtask["end_time"], datetime):
-            raise Exception("Task end_time must be a datetime object")
         if not isinstance(subtask["status"], str):
             raise Exception("Task status must be a string")
         if not isinstance(subtask["duration"], (int, float)):
