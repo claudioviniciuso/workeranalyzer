@@ -133,7 +133,7 @@ class Session(StorageFunctions, ValidateFunctions):
         except Exception as e:
             print(f"Error loading session: {e}")
 
-class Task:
+class Task(ValidateFunctions):
     def __init__(self, task_name) -> None:
         if not isinstance(task_name, str):
             raise Exception("Task name must be a string")
@@ -156,20 +156,7 @@ class Task:
         Get task dictionary
         :return: task dictionary
         """
-        task = {
-            "id": self.id,
-            "name": self.name,
-            "start_time": self.start_time.isoformat()
-            if self.start_time is not None
-            else None,
-            "end_time": self.end_time.isoformat()
-            if self.end_time is not None
-            else None,
-            "duration": self.duration,
-            "status": self.status,
-            "subtasks": self.subtasks,
-        }
-        return task
+        return self.__dict__
 
     def start(self):
         """
@@ -181,30 +168,6 @@ class Task:
         self.start_time = datetime.now()
         self.status = "In Progress"
 
-    @staticmethod
-    def __validadate_subtask_dict(subtask):
-        required_keys = [
-            "name",
-            "start_time",
-            "end_time",
-            "status",
-            "duration",
-            "metrics",
-        ]
-        for key in required_keys:
-            if key not in subtask:
-                raise Exception(
-                    f"Task missing required key: {key} for adding to session"
-                )
-        if not isinstance(subtask["name"], str):
-            raise Exception("Task name must be a string")
-        if not isinstance(subtask["status"], str):
-            raise Exception("Task status must be a string")
-        if not isinstance(subtask["duration"], (int, float)):
-            raise Exception("Task duration must be a int or float")
-        if not isinstance(subtask["metrics"], list):
-            raise Exception("Task metrics must be a list")
-
     def add_subtask(self, subtask: dict):
         if not isinstance(subtask, dict):
             raise Exception("Task must be a dictionary")
@@ -215,14 +178,22 @@ class Task:
         if self.end_time is not None:
             raise Exception("Task already ended")
 
-        self.__validadate_subtask_dict(subtask)
+        verifications = [
+            ["name", str],
+            ["start_time", datetime],
+            ["end_time", datetime],
+            ["status", str],
+            ["duration", (int, float)],
+            ["metrics", list]
+        ]
+        self.validate_dict(subtask, verifications)
         self.subtasks.append(subtask)
 
     def verify_status(self):
         """
         Verify task status based on subtasks
         """
-        status_counts = Counter(subtask["status"] for subtask in self.subtasks)
+        status_counts = Counter(subtask["status"].lower() for subtask in self.subtasks)
 
         if status_counts["success"] == len(self.subtasks):
             self.status = "success"
@@ -232,7 +203,7 @@ class Task:
             self.status = "partial"
         else:
             self.status = (
-                "not started"  # ou algum outro status padrão para tarefas sem subtasks
+                "not started"  
             )
 
         return self.status
@@ -251,7 +222,7 @@ class Task:
         self.duration = (self.end_time - self.start_time).total_seconds()
         self.verify_status()
 
-class SubTask:
+class SubTask(ValidateFunctions):
     def __init__(self, name, subtask_type) -> None:
         if not isinstance(name, str):
             raise Exception("Subtask name must be a string")
@@ -269,21 +240,7 @@ class SubTask:
 
     @property
     def subtask(self):
-        subtask = {
-            "id": self.id,
-            "name": self.name,
-            "task_type": self.subtask_type,
-            "start_time": self.start_time.isoformat()
-            if self.start_time is not None
-            else None,
-            "end_time": self.end_time.isoformat()
-            if self.end_time is not None
-            else None,
-            "duration": self.duration,
-            "status": self.status,
-            "metrics": self.metrics,
-        }
-        return subtask
+        return self.__dict__
 
     def start(self):
         """
@@ -291,10 +248,11 @@ class SubTask:
         """
         if self.start_time is not None:
             raise Exception("Subtask already started")
+        
         self.start_time = datetime.now()
         self.status = "In Progress"
 
-    def add_metric(self, metrics: dict):
+    def add_metrics(self, metrics: dict):
         """
         Add metrics to subtask
         :param metrics: metrics to be added
@@ -318,16 +276,19 @@ class SubTask:
         Get task status based on metrics
         :return: task status
         """
-        status_counts = Counter(metric["status"] for metric in self.metrics)
+        status_counts = Counter(metric["status"].lower() for metric in self.metrics if "status" in metric)
+        
         if status_counts["success"] == len(self.metrics):
             self.status = "success"
         elif status_counts["failure"] == len(self.metrics):
             self.status = "failure"
+        elif status_counts["success"] == 0 and status_counts["failure"] == 0 and status_counts["partial"] == 0:
+            raise Exception("Metrics must have at least one success or failure status")
         elif len(self.metrics) > 0:
             self.status = "partial"
         else:
             self.status = (
-                "not started"  # ou algum outro status padrão para tarefas sem subtasks
+                "not started"  
             )
 
         return self.status

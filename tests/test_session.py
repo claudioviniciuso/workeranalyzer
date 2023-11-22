@@ -18,7 +18,6 @@ def test_session_initialization():
     assert session.tasks == []
 
 ## Attributes
-
 def test_add_attribute():
     session = Session()
     session.add_attribute("test_key", "test_value")
