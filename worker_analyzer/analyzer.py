@@ -112,10 +112,11 @@ class Session:
         self.duration = (self.end_time - self.start_time).total_seconds()
         self.status = "Done"
 
-    def save_tmp_session(self):
-        storage_path = os.getenv(
-            "WORKER_ANALYZER_STORAGE_PATH", "/default/path/if/not/set"
-        )
+    def save_tmp_session(self, storage_path):
+        if storage_path is None:
+            storage_path = os.getenv(
+                "WORKER_ANALYZER_STORAGE_PATH"
+            )
         if not storage_path:
             raise Exception("Storage path not set")
         
@@ -127,10 +128,12 @@ class Session:
         except Exception as e:
             print(f"Error saving session: {e}")
 
-    def load_tmp_session(self):
-        storage_path = os.getenv(
-            "WORKER_ANALYZER_STORAGE_PATH", "/default/path/if/not/set"
-        )
+    def load_tmp_session(self, storage_path):
+        if storage_path is None:
+            storage_path = os.getenv(
+                "WORKER_ANALYZER_STORAGE_PATH"
+            )
+        
         if not storage_path:
             raise Exception("Storage path not set")
 
