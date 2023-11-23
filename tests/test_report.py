@@ -59,7 +59,7 @@ def test_generate_report():
     assert generated_report["Number of tasks with more than 50% partial"] == 0
     assert generated_report["Tasks"] is not None
     assert len(generated_report["Tasks"]) == len(session["tasks"])
-    assert generated_report["Tasks"][0]["task"] == session["tasks"][0]["id"]
+    assert generated_report["Tasks"][0]["task"] == session["tasks"][0]["name"]
     assert generated_report["Tasks"][0]["status"] == session["tasks"][0]["status"]
     assert generated_report["Tasks"][0]["count_substasks"] == 0
     assert generated_report["Tasks"][0]["success"] == "N/A"

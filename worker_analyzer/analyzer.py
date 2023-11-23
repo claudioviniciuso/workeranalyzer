@@ -119,6 +119,7 @@ class Session(StorageFunctions, ValidateFunctions):
             raise Exception("Invalid storage path")
 
         file_path = os.path.join(storage_path, "tmp_session.json")
+        print(file_path)
         if not os.path.exists(file_path):
             raise Exception("Session file does not exist at the provided path")
         try:

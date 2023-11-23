@@ -41,7 +41,7 @@ class DefaultReport:
     def format_task_data(self, task):
         count_subtasks = task['count_subtasks']
         task_info = {
-            "task": task['id'],
+            "task": task['name'],
             "status": task['status'],
             "count_substasks": count_subtasks,
             "success": f"{task['success']} ({task['success'] / count_subtasks * 100:.2f}%)" if count_subtasks > 0 else "N/A",

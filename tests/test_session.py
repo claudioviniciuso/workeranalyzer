@@ -230,7 +230,7 @@ def test_load_tmp_session_valid_path():
 def test_load_tmp_session_invalid_path():
     session = Session()
     with pytest.raises(Exception) as excinfo:
-        session.load_tmp_session("/invalid/path")
+        session.load_tmp_session(",/invalid/path")
     assert "Invalid storage path" in str(excinfo.value)
 
 def test_load_tmp_session_no_file_at_path():

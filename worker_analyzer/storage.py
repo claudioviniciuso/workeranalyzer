@@ -1,30 +1,35 @@
 import os
 from datetime import datetime
 import json
+from .common import StorageFunctions
 
-class LocalStorage:
+class LocalStorage(StorageFunctions):
     def __init__(self, path):
+        if not isinstance(path, str) or not path:
+            raise ValueError("Path must be a non-empty string")
+        # Verify path ended with '/' and remove it
+        if path[-1] == '/':
+            path = path[:-1]
+
         self.path = path
 
-    @staticmethod
-    def _prepare_data_for_json(data):
-        for key, value in data.items():
-            if isinstance(value, datetime):
-                data[key] = value.isoformat()
-            elif isinstance(value, dict):
-                data[key] = LocalStorage._prepare_data_for_json(value)
-            elif isinstance(value, list):
-                data[key] = [LocalStorage._prepare_data_for_json(item) if isinstance(item, dict) else item for item in value]
-        return data
-
-    def save(self, session:dict):
-        if not isinstance(session, dict):
+    def save(self, data:dict):
+        if not isinstance(data, dict):
             raise TypeError("Expected dictionary for 'session'")
         
-        os.makedirs(self.path, exist_ok=True)
+        try:
+            os.makedirs(self.path, exist_ok=True)
+        except OSError as e:
+            raise Exception(f"Failed to create directory")
+        
         formatted_date = datetime.now().strftime("%Y%m%d%H%M%S")
-        file_name = f'{formatted_date}_{session["id"]}.json'
+        identifier = data.get("id") if data.get("id") else "report"
+        file_name = f'{formatted_date}_{identifier}.json'
         file_path = os.path.join(self.path, file_name)
-        with open(file_path, 'w') as f:
-            json.dump(LocalStorage._prepare_data_for_json(session), f)
-
+        
+        try:
+            with open(file_path, 'w') as f:
+                json.dump(self.date_to_isoformat(data), f)
+        except OSError as e:
+            raise Exception(f"Failed to write to file")
+    
