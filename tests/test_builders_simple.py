@@ -14,9 +14,11 @@ def test_metrics_builder_initialization():
     assert metrics_builder.errors == []
     assert metrics_builder.additional_metrics == {}
 
+
 def test_metrics_builder_initialization_without_name():
     with pytest.raises(ValueError):
         metrics_builder = SimpleMetricsBuilder("")
+
 
 ## Start
 def test_start_metrics_collection():
@@ -27,12 +29,14 @@ def test_start_metrics_collection():
     with pytest.raises(Exception):
         metrics_builder.start()  # Testando iniciar uma coleta de métricas já iniciada
 
+
 def test_start_metrics_collection_after_end():
     metrics_builder = SimpleMetricsBuilder("metrics1")
     metrics_builder.start()
     metrics_builder.end("success")
     with pytest.raises(Exception):
         metrics_builder.start()  # Testando iniciar uma coleta de métricas já finalizada
+
 
 ## End
 def test_end_metrics_collection():
@@ -44,24 +48,34 @@ def test_end_metrics_collection():
     assert metrics_builder.status == "success"
 
     with pytest.raises(Exception):
-        metrics_builder.end("success")  # Testando finalizar uma coleta de métricas já finalizada
+        metrics_builder.end(
+            "success"
+        )  # Testando finalizar uma coleta de métricas já finalizada
+
 
 def test_end_metrics_collection_before_start():
     metrics_builder = SimpleMetricsBuilder("metrics1")
     with pytest.raises(Exception):
-        metrics_builder.end("success")  # Testando finalizar uma coleta de métricas antes de iniciar
+        metrics_builder.end(
+            "success"
+        )  # Testando finalizar uma coleta de métricas antes de iniciar
+
 
 def test_end_metrics_with_invalid_status():
     metrics_builder = SimpleMetricsBuilder("metrics1")
     metrics_builder.start()
     with pytest.raises(Exception):
-        metrics_builder.end("invalid status")  # Testando finalizar uma coleta de métricas com status inválido
+        metrics_builder.end(
+            "invalid status"
+        )  # Testando finalizar uma coleta de métricas com status inválido
+
 
 def test_end_metrics_with_UpperCase_status():
     metrics_builder = SimpleMetricsBuilder("metrics1")
     metrics_builder.start()
     metrics_builder.end("SUCCESS")
     assert metrics_builder.status == "success"
+
 
 ## Add Metrics
 def test_add_metrics():
@@ -81,11 +95,13 @@ def test_add_metrics():
         "metric2": 2,
     }
 
+
 def test_add_blank_metrics():
     metrics_builder = SimpleMetricsBuilder("metrics1")
     metrics_builder.start()
     with pytest.raises(Exception):
         metrics_builder.add_metrics_attr({})  # Testando adicionar métricas vazias
+
 
 def test_return_metrics():
     metrics_builder = SimpleMetricsBuilder("metrics1")
@@ -95,8 +111,9 @@ def test_return_metrics():
         "name": "metrics1",
         "duration": metrics_builder.duration,
         "status": metrics_builder.status,
-        "errors": []
+        "errors": [],
     }
+
 
 def test_end_metrics_collection_with_error():
     metrics_builder = SimpleMetricsBuilder("metrics1")
@@ -106,5 +123,3 @@ def test_end_metrics_collection_with_error():
     assert metrics_builder.duration is not None
     assert metrics_builder.status == "success"
     assert metrics_builder.errors == ["error content"]
-
-

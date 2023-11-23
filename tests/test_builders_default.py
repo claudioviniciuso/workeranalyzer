@@ -3,6 +3,7 @@ import pytest
 from datetime import datetime
 from worker_analyzer.builders import DefaultMetricsBuilder
 
+
 ## Init
 def test_metrics_builder_initialization():
     metrics_builder = DefaultMetricsBuilder("metrics1")
@@ -17,9 +18,13 @@ def test_metrics_builder_initialization():
     assert metrics_builder.errors == []
     assert metrics_builder.additional_metrics == {}
 
+
 def test_metrics_builder_initialization_with_blank_name():
     with pytest.raises(Exception):
-        metrics_builder = DefaultMetricsBuilder("")  # Testing initialization with blank name
+        metrics_builder = DefaultMetricsBuilder(
+            ""
+        )  # Testing initialization with blank name
+
 
 ## Start
 def test_metrics_builder_start():
@@ -30,12 +35,14 @@ def test_metrics_builder_start():
     with pytest.raises(Exception):
         metrics_builder.start()  # Testando iniciar uma coleta de métricas já iniciada
 
+
 def test_metrics_builder_start_after_end():
     metrics_builder = DefaultMetricsBuilder("metrics1")
     metrics_builder.start()
     metrics_builder.end()
     with pytest.raises(Exception):
         metrics_builder.start()  # Testando iniciar uma coleta de métricas já finalizada
+
 
 ## End
 def test_metrics_builder_end():
@@ -54,10 +61,12 @@ def test_metrics_builder_end():
     with pytest.raises(Exception):
         metrics_builder.end()  # Testando finalizar uma coleta de métricas já finalizada
 
+
 def test_metrics_builder_end_before_start():
     metrics_builder = DefaultMetricsBuilder("metrics1")
     with pytest.raises(Exception):
         metrics_builder.end()  # Testando finalizar uma coleta de métricas antes de iniciar
+
 
 ## Log
 def test_metrics_builder_log_success():
@@ -69,6 +78,7 @@ def test_metrics_builder_log_success():
     assert metrics_builder.blank == 0
     assert metrics_builder.failure == 0
 
+
 def test_metrics_builder_log_failure():
     metrics_builder = DefaultMetricsBuilder("metrics1")
     metrics_builder.start()
@@ -77,6 +87,7 @@ def test_metrics_builder_log_failure():
     assert metrics_builder.success == 0
     assert metrics_builder.blank == 0
     assert metrics_builder.failure == 1
+
 
 def test_metrics_builder_log_blank():
     metrics_builder = DefaultMetricsBuilder("metrics1")
@@ -87,19 +98,24 @@ def test_metrics_builder_log_blank():
     assert metrics_builder.blank == 1
     assert metrics_builder.failure == 0
 
+
 def test_metrics_builder_log_invalid_status():
     metrics_builder = DefaultMetricsBuilder("metrics1")
     metrics_builder.start()
     with pytest.raises(ValueError):
         metrics_builder.log("invalid_status")  # Testando logar um status inválido
 
+
 def test_metrics_builder_log_after_end():
     metrics_builder = DefaultMetricsBuilder("metrics1")
     metrics_builder.start()
     metrics_builder.end()
     with pytest.raises(Exception):
-        metrics_builder.log("success")  # Testando logar após finalizar a coleta de métricas
-    
+        metrics_builder.log(
+            "success"
+        )  # Testando logar após finalizar a coleta de métricas
+
+
 def test_metrics_builder_end_without_log():
     metrics_builder = DefaultMetricsBuilder("metrics1")
     metrics_builder.start()
@@ -109,7 +125,8 @@ def test_metrics_builder_end_without_log():
     assert metrics_builder.success == 0
     assert metrics_builder.blank == 0
     assert metrics_builder.failure == 0
-    
+
+
 # Add Metrics Attr
 def test_add_attr_metrics_builder():
     metrics_builder = DefaultMetricsBuilder("metrics1")
@@ -129,7 +146,7 @@ def test_add_attr_metrics_builder():
         "failure": metrics_builder.failure,
         "errors": metrics_builder.errors,
         "rows": 1,
-        "att teste": 2
+        "att teste": 2,
     }
 
 
@@ -147,8 +164,9 @@ def test_return_metrics():
         "success": metrics_builder.success,
         "blank": metrics_builder.blank,
         "failure": metrics_builder.failure,
-        "errors": metrics_builder.errors
+        "errors": metrics_builder.errors,
     }
+
 
 def test_return_metrics_with_add_attr():
     metrics_builder = DefaultMetricsBuilder("metrics1")
@@ -166,5 +184,5 @@ def test_return_metrics_with_add_attr():
         "blank": metrics_builder.blank,
         "failure": metrics_builder.failure,
         "errors": metrics_builder.errors,
-        "rows": 1
+        "rows": 1,
     }

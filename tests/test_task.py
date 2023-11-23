@@ -3,6 +3,7 @@ import pytest
 from datetime import datetime
 from worker_analyzer.analyzer import Task
 
+
 ## Init
 def test_task_initialization():
     task = Task("test task")
@@ -14,6 +15,7 @@ def test_task_initialization():
     assert task.status is None
     assert task.subtasks == []
 
+
 ## Start
 def test_start_task():
     task = Task("task1")
@@ -24,12 +26,14 @@ def test_start_task():
     with pytest.raises(Exception):
         task.start()  # Testando iniciar uma tarefa já iniciada
 
+
 def test_start_task_after_end():
     task = Task("task1")
     task.start()
     task.end()
     with pytest.raises(Exception):
         task.start()  # Testando iniciar uma tarefa já finalizada
+
 
 ## End
 def test_end_task():
@@ -43,10 +47,12 @@ def test_end_task():
     with pytest.raises(Exception):
         task.end()  # Testando finalizar uma tarefa já finalizada
 
+
 def test_end_task_before_start():
     task = Task("task1")
     with pytest.raises(Exception):
         task.end()  # Testando finalizar uma tarefa antes de iniciar
+
 
 ## Add Subtask
 def test_add_subtask():
@@ -63,11 +69,13 @@ def test_add_subtask():
     task.add_subtask(subtask)
     assert subtask in task.subtasks
 
+
 def test_add_blank_subtask():
     task = Task("task1")
     task.start()
     with pytest.raises(Exception):
         task.add_subtask({})  # Testando adicionar subtask vazia
+
 
 def test_add_subtask_before_start():
     task = Task("task1")
@@ -80,7 +88,10 @@ def test_add_subtask_before_start():
         "metrics": {},
     }
     with pytest.raises(Exception):
-        task.add_subtask(subtask)  # Testando adicionar subtask antes de iniciar a tarefa
+        task.add_subtask(
+            subtask
+        )  # Testando adicionar subtask antes de iniciar a tarefa
+
 
 def test_add_subtask_after_end():
     task = Task("task1")
@@ -95,8 +106,11 @@ def test_add_subtask_after_end():
         "metrics": {},
     }
     with pytest.raises(Exception):
-        task.add_subtask(subtask)  # Testando adicionar subtask depois de finalizar a tarefa
-        
+        task.add_subtask(
+            subtask
+        )  # Testando adicionar subtask depois de finalizar a tarefa
+
+
 def test_task():
     task = Task("task1")
     task.start()
@@ -110,6 +124,7 @@ def test_task():
     assert task_dict["status"] == task.status
     assert task_dict["subtasks"] == task.subtasks
 
+
 def test_add_incomplet_subtask():
     task = Task("task1")
     task.start()
@@ -118,10 +133,11 @@ def test_add_incomplet_subtask():
         "end_time": None,
         "duration": 1,
         "status": "Success",
-        "metrics": []
+        "metrics": [],
     }
     with pytest.raises(Exception):
         task.add_subtask(subtask)  # Testando adicionar subtask incompleta
+
 
 def test_add_incorrect_subtask():
     task = Task("task1")
@@ -132,7 +148,7 @@ def test_add_incorrect_subtask():
         "end_time": datetime.now(),
         "duration": "1",
         "status": "Success",
-        "metrics": []
+        "metrics": [],
     }
     with pytest.raises(Exception):
         task.add_subtask(subtask)  # Testando adicionar subtask incompleta
@@ -162,6 +178,7 @@ def test_status_by_verify_status_success():
     task.add_subtask(subtask)
     task.end()
     assert task.status == "success"
+
 
 def test_status_by_verify_status_failure():
     task = Task("task1")

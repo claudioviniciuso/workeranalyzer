@@ -7,6 +7,7 @@ from datetime import datetime
 from worker_analyzer.analyzer import Session
 from worker_analyzer.common import StorageFunctions, ValidateFunctions
 
+
 def test_session_initialization():
     session = Session()
     assert session.id is not None
@@ -17,6 +18,7 @@ def test_session_initialization():
     assert session.custom_attributes == {}
     assert session.tasks == []
 
+
 ## Attributes
 def test_add_attribute():
     session = Session()
@@ -25,17 +27,22 @@ def test_add_attribute():
     assert session.custom_attributes["test_key"] == "test_value"
 
     with pytest.raises(Exception):
-        session.add_attribute("test_key", "new_value")  # Testing add attribute with same key
+        session.add_attribute(
+            "test_key", "new_value"
+        )  # Testing add attribute with same key
+
 
 def test_add_blank_attribute():
     session = Session()
     with pytest.raises(Exception):
         session.add_attribute("", "")  # Testing add blank attribute
 
+
 def test_add_blank_value_attribute():
     session = Session()
     with pytest.raises(Exception):
         session.add_attribute("test_key", "")  # Testing add blank value attribute
+
 
 ## Start
 def test_start_session():
@@ -47,12 +54,14 @@ def test_start_session():
     with pytest.raises(Exception):
         session.start()  # Testing start session after start
 
+
 def test_start_session_after_end():
     session = Session()
     session.start()
     session.end()
     with pytest.raises(Exception):
         session.start()  # Testando iniciar sessão após finalizar
+
 
 ## End
 def test_end_session():
@@ -66,11 +75,13 @@ def test_end_session():
     with pytest.raises(Exception):
         session.end()  # Testing end session after end
 
+
 def test_end_session_before_start():
     session = Session()
     with pytest.raises(Exception):
         session.end()  # Testando finalizar sessão antes de iniciar
-    
+
+
 ## Add Task
 def test_add_task():
     session = Session()
@@ -82,13 +93,14 @@ def test_add_task():
         "duration": 1,
         "status": "Success",
         "subtasks": [],
-        "id": str(uuid.uuid4())
-        }
+        "id": str(uuid.uuid4()),
+    }
     session.add_task(task)
     assert session.tasks == [task]
 
     with pytest.raises(Exception):
         session.add_task("task")  # Testando adição de tarefa após finalizar sessão
+
 
 def test_add_not_dict_task():
     session = Session()
@@ -96,11 +108,13 @@ def test_add_not_dict_task():
     with pytest.raises(Exception):
         session.add_task("task")  # Testando adição de tarefa com tipo diferente de dict
 
+
 def test_add_blank_task():
     session = Session()
     session.start()
     with pytest.raises(Exception):
         session.add_task({})  # Testando adição de tarefa vazia
+
 
 def test_add_task_without_start_session():
     session = Session()
@@ -111,10 +125,11 @@ def test_add_task_without_start_session():
         "duration": 1,
         "status": "Success",
         "subtasks": [],
-        "id": str(uuid.uuid4())
-        }
+        "id": str(uuid.uuid4()),
+    }
     with pytest.raises(Exception):
         session.add_task(task)  # Testando adição de tarefa sem iniciar sessão
+
 
 def test_add_task_after_end_session():
     session = Session()
@@ -127,11 +142,12 @@ def test_add_task_after_end_session():
         "duration": 1,
         "status": "Success",
         "subtasks": [],
-        "id": str(uuid.uuid4())
-        }
+        "id": str(uuid.uuid4()),
+    }
     with pytest.raises(Exception):
         session.add_task(task)  # Testando adição de tarefa após finalizar sessão
-    
+
+
 def test_add_task_with_invalid_type():
     session = Session()
     session.start()
@@ -142,10 +158,11 @@ def test_add_task_with_invalid_type():
         "duration": "1",
         "status": "Success",
         "subtasks": [],
-        "id": str(uuid.uuid4())
-        }
+        "id": str(uuid.uuid4()),
+    }
     with pytest.raises(Exception):
         session.add_task(task)  # Testando adição de tarefa com tipo inválido
+
 
 ## Save
 def test_save_tmp_session_valid_path():
@@ -159,8 +176,8 @@ def test_save_tmp_session_valid_path():
         "duration": 1,
         "status": "Success",
         "subtasks": [],
-        "id": str(uuid.uuid4())
-        }
+        "id": str(uuid.uuid4()),
+    }
     session.add_task(task)
     session.add_attribute("test_key", "test_value")
     session.save_tmp_session("tmp")
@@ -176,6 +193,7 @@ def test_save_tmp_session_valid_path():
         assert data["custom_attributes"] == session.custom_attributes
         assert data["tasks"] == session.tasks
 
+
 def test_save_tmp_session_no_path_and_not_env_varible():
     session = Session()
     session.start()
@@ -186,8 +204,8 @@ def test_save_tmp_session_no_path_and_not_env_varible():
         "duration": 1,
         "status": "Success",
         "subtasks": [],
-        "id": str(uuid.uuid4())
-        }
+        "id": str(uuid.uuid4()),
+    }
     session.add_task(task)
     session.add_attribute("test_key", "test_value")
 
@@ -195,7 +213,7 @@ def test_save_tmp_session_no_path_and_not_env_varible():
         session.save_tmp_session()
         assert False, "Excepetion not raised"
     except Exception as e:
-        assert str(e) == "Storage path not set"  
+        assert str(e) == "Storage path not set"
 
 
 ## Load
@@ -209,12 +227,12 @@ def test_load_tmp_session_valid_path():
         "duration": 1,
         "status": "Success",
         "subtasks": [],
-        "id": str(uuid.uuid4())
-        }
+        "id": str(uuid.uuid4()),
+    }
     session.add_task(task)
     session.add_attribute("test_key", "test_value")
     print(session.session)
-    session.save_tmp_session("tmp")    
+    session.save_tmp_session("tmp")
     print(session.session)
     session2 = Session()
     session2.load_tmp_session("tmp")
@@ -233,12 +251,14 @@ def test_load_tmp_session_invalid_path():
         session.load_tmp_session(",/invalid/path")
     assert "Invalid storage path" in str(excinfo.value)
 
+
 def test_load_tmp_session_no_file_at_path():
     session = Session()
     with tempfile.TemporaryDirectory() as tmp_dir:
         with pytest.raises(Exception) as excinfo:
             session.load_tmp_session(tmp_dir)
         assert "Session file does not exist at the provided path" in str(excinfo.value)
+
 
 def test_load_tmp_session_empty_path():
     session = Session()

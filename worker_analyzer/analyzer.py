@@ -134,6 +134,7 @@ class Session(StorageFunctions, ValidateFunctions):
         except Exception as e:
             print(f"Error loading session: {e}")
 
+
 class Task(ValidateFunctions):
     def __init__(self, task_name) -> None:
         if not isinstance(task_name, str):
@@ -185,7 +186,7 @@ class Task(ValidateFunctions):
             ["end_time", datetime],
             ["status", str],
             ["duration", (int, float)],
-            ["metrics", list]
+            ["metrics", list],
         ]
         self.validate_dict(subtask, verifications)
         self.subtasks.append(subtask)
@@ -203,9 +204,7 @@ class Task(ValidateFunctions):
         elif len(self.subtasks) > 0:
             self.status = "partial"
         else:
-            self.status = (
-                "not started"  
-            )
+            self.status = "not started"
 
         return self.status
 
@@ -222,6 +221,7 @@ class Task(ValidateFunctions):
         self.end_time = datetime.now()
         self.duration = (self.end_time - self.start_time).total_seconds()
         self.verify_status()
+
 
 class SubTask(ValidateFunctions):
     def __init__(self, name, subtask_type) -> None:
@@ -249,7 +249,7 @@ class SubTask(ValidateFunctions):
         """
         if self.start_time is not None:
             raise Exception("Subtask already started")
-        
+
         self.start_time = datetime.now()
         self.status = "In Progress"
 
@@ -277,20 +277,24 @@ class SubTask(ValidateFunctions):
         Get task status based on metrics
         :return: task status
         """
-        status_counts = Counter(metric["status"].lower() for metric in self.metrics if "status" in metric)
-        
+        status_counts = Counter(
+            metric["status"].lower() for metric in self.metrics if "status" in metric
+        )
+
         if status_counts["success"] == len(self.metrics):
             self.status = "success"
         elif status_counts["failure"] == len(self.metrics):
             self.status = "failure"
-        elif status_counts["success"] == 0 and status_counts["failure"] == 0 and status_counts["partial"] == 0:
+        elif (
+            status_counts["success"] == 0
+            and status_counts["failure"] == 0
+            and status_counts["partial"] == 0
+        ):
             raise Exception("Metrics must have at least one success or failure status")
         elif len(self.metrics) > 0:
             self.status = "partial"
         else:
-            self.status = (
-                "not started"  
-            )
+            self.status = "not started"
 
         return self.status
 

@@ -19,9 +19,9 @@ def test_report_initialization():
                 "duration": 1,
                 "status": "Success",
                 "subtasks": [],
-                "id": str(uuid.uuid4())
+                "id": str(uuid.uuid4()),
             }
-        ]
+        ],
     }
     report = DefaultReport(session)
     assert report.data is not None
@@ -43,9 +43,9 @@ def test_generate_report():
                 "duration": 1,
                 "status": "Success",
                 "subtasks": [],
-                "id": str(uuid.uuid4())
+                "id": str(uuid.uuid4()),
             }
-        ]
+        ],
     }
     report = DefaultReport(session)
     generated_report = report.generate_report()
@@ -65,4 +65,3 @@ def test_generate_report():
     assert generated_report["Tasks"][0]["success"] == "N/A"
     assert generated_report["Tasks"][0]["failure"] == "N/A"
     assert generated_report["Tasks"][0]["partial"] == "N/A"
-
