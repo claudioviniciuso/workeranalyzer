@@ -246,9 +246,26 @@ print(report.generate_report())
 ![Comparation](docs/assets/code_comparation.png)
 
 
+## Documentação Completa:
+**Analyzer:**
+- [Session](/docs/sessions.md)
+- [Task](/docs/task.md)
+- [Subtask](/docs/subtask.md)
+
+**Builders:**
+- [Builders](/docs/builders.md)
+
+**Report:**
+- [Report](/docs/report.md)
+
+**Storage:**
+- [Storage](/docs/storage.md)
+
 ## Contribuição
 
 Contribuições para o `worker_analyzer` são bem-vindas! Por favor, leia as diretrizes de contribuição para mais informações.
+
+Veja as issues disponíveis ou sugira novas melhorias.
 
 ## Licença
 
