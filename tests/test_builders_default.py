@@ -126,6 +126,45 @@ def test_metrics_builder_end_without_log():
     assert metrics_builder.blank == 0
     assert metrics_builder.failure == 0
 
+def test_metrics_builder_end_status():
+    metrics_builder = DefaultMetricsBuilder("metrics1")
+    metrics_builder.start()
+    metrics_builder.log("success")
+    metrics_builder.log("failure")
+    metrics_builder.log("blank")
+    metrics_builder.end()
+    assert metrics_builder.status == "partial"
+    assert metrics_builder.total == 3
+    assert metrics_builder.success == 1
+    assert metrics_builder.blank == 1
+    assert metrics_builder.failure == 1
+
+def test_metrics_builder_end_status_success():
+    metrics_builder = DefaultMetricsBuilder("metrics1")
+    metrics_builder.start()
+    metrics_builder.log("success")
+    metrics_builder.log("success")
+    metrics_builder.log("success")
+    metrics_builder.end()
+    assert metrics_builder.status == "success"
+    assert metrics_builder.total == 3
+    assert metrics_builder.success == 3
+    assert metrics_builder.blank == 0
+    assert metrics_builder.failure == 0
+
+def test_metrics_builder_end_status_failure():
+    metrics_builder = DefaultMetricsBuilder("metrics1")
+    metrics_builder.start()
+    metrics_builder.log("failure")
+    metrics_builder.log("failure")
+    metrics_builder.log("failure")
+    metrics_builder.end()
+    assert metrics_builder.status == "failure"
+    assert metrics_builder.total == 3
+    assert metrics_builder.success == 0
+    assert metrics_builder.blank == 0
+    assert metrics_builder.failure == 3
+
 
 # Add Metrics Attr
 def test_add_attr_metrics_builder():

@@ -113,7 +113,7 @@ class DefaultMetricsBuilder:
             self.status = "success"
         elif self.total == self.failure:
             self.status = "failure"
-        elif self.total == self.blank:
+        elif self.total >0:
             self.status = "partial"
         else:
             self.status = "Not started"
