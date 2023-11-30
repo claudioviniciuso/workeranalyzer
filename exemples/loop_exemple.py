@@ -2,6 +2,7 @@ from worker_analyzer.analyzer import Session, Task, SubTask
 from worker_analyzer.builders import DefaultMetricsBuilder
 from worker_analyzer.storage import LocalStorage
 from worker_analyzer.report import DefaultReport
+from worker_analyzer.notification import SlackNotification
 import random
 
 
@@ -17,6 +18,8 @@ session.start()
 session.add_attribute("user", "user1")
 session.add_attribute("env", "teste")
 session.add_attribute("version", "1.0.0")
+
+slack = SlackNotification("")
 
 for task_n in tasks_list:
     task = Task(task_n)
@@ -57,6 +60,7 @@ storage.save(session.session)
 
 report = DefaultReport(session.session)
 print(report.generate_report())
-print(session.session)
+#print(session.session)
 
+print(slack.send_notification_report(report.generate_report()))
 
