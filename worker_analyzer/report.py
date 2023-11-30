@@ -35,7 +35,6 @@ class DefaultReport:
 
         report = {
             "Session ID": session_id,
-            "DAG ID": self.data["dag_id"].iloc[0],
             "Start Time": start_time.isoformat() if pd.notnull(start_time) else "N/A",
             "End Time": end_time.isoformat() if pd.notnull(end_time) else "N/A",
             "Duration": duration,
