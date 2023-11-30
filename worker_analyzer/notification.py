@@ -53,7 +53,7 @@ class SlackNotification:
                     },
                     {
                         "type": "header",
-                        "text": { "type": "plain_text", "text": "Tasks Resume: ", "emoji": True }
+                        "text": { "type": "plain_text", "text": "Tasks Summary: ", "emoji": True }
                     }
                 ]
             }
