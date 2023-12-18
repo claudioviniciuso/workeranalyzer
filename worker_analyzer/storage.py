@@ -3,6 +3,7 @@ import json
 
 from datetime import datetime
 from pymongo import MongoClient
+from urllib.parse import urlparse
 from .common import StorageFunctions
 
 
@@ -43,48 +44,49 @@ class MongoStorage(StorageFunctions):
     def __init__(self, connection, collection):
         self.connection = connection
         self.collection_name = collection
+        self.database = None
         self.client = None
-        self.sessions = None
 
 
-    def parse_url():
-        pass
+    def extrair_info_url_mongodb(url):
+        # Analisa a URL
+        parsed_url = urlparse(url)
+
+        # Obtém a URL sem o nome do banco de dados
+        url_sem_db = f"{parsed_url.scheme}://{parsed_url.netloc}"
+
+        # Obtém o nome do banco de dados, se presente
+        database = parsed_url.path[1:]  # Ignora a barra inicial
+
+        return url_sem_db, database
+
 
     def create_connection(self):
         ''' Método responsável por criar a cadeia de conexão e acessar client MongoDB.
         '''
-        if 'url' not in self.connection or 'database' not in self.connection:
-            raise ValueError("Connection dictionary must contain 'url' and 'database'")
+        if 'url' not in self.connection:
+            raise ValueError("Connection dictionary must contain 'url'")
 
         if not self.connection['url']:
             raise ValueError("URL in connection dictionary cannot be null")
 
+        url = self.connection['url']
+        if 'database' not in self.connection:
+            url, database = self.extrair_info_url_mongodb(self.connection['url'])
+        else:
+            database = self.connection['database']
+
         try:
-            # Remova a porta da URL
-            url_without_port = self.connection['url'].split(':')[0]
-            print(url_without_port)
-            self.client = MongoClient(url_without_port)
-            self.sessions = self.client[self.connection['database']][self.collection_name]
+            self.client = MongoClient(url)
+            self.database = self.client[self.connection['database']] if not database else self.client[database]
+
         except Exception as e:
             raise ConnectionError(f"Error creating connection: {str(e)}")
 
-        # if 'url' not in self.connection or 'database' not in self.connection:
-        #     raise ValueError("Connection dictionary must contain 'url' and 'database'")
-
-        # if not self.connection['url']:
-        #     raise ValueError("URL in connection dictionary cannot be null")
-
-        # try:
-        #     url_without_port = self.connection['url'].split(':')[0]
-        #     self.client = MongoClient(url_without_port)
-        #     # self.client = MongoClient(self.connection['url'])
-        #     self.sessions = self.client[self.connection['database']][self.collection_name]
-        # except Exception as e:
-        #     raise ConnectionError(f"Error creating connection: {str(e)}")
-
 
     def test_connection(self):
-        ''' Valida se a conexão está ativa, se o database e a collection existe. Em caso negativo, retornar false e exception.test
+        ''' Valida se a conexão está ativa, se o database e a collection existe.
+        Em caso negativo, retornar false e exception.test
         '''
         if not self.client:
             return False
@@ -97,7 +99,8 @@ class MongoStorage(StorageFunctions):
 
 
     def connect(self):
-        ''' Método responsável por criar a conexão, testar e retornar True ou False. Em caso de erro, retornar detalhamento do exception.
+        ''' Método responsável por criar a conexão, testar e retornar True ou
+        False. Em caso de erro, retorna detalhamento do `Exception`.
         '''
         try:
             self.create_connection()
@@ -106,8 +109,10 @@ class MongoStorage(StorageFunctions):
             return str(e)
 
 
-    def save(self, session):
-        ''' Recebe como parâmetro um dicionário Python chamado `session` que deve ser armazenado na `collection` informada. Deve retornar um status: Success ou Failure e o ID do documento que foi criado no MongoDB.
+    def save(self, session: dict):
+        ''' Recebe como parâmetro um dicionário Python chamado `session` que deve
+        ser armazenado na `collection` informada. Deve retornar um status:
+        `Success` ou `Failure` e o ID do documento que foi criado no MongoDB.
         '''
         if not isinstance(session, dict):
             return False, "Input is not a dictionary"
@@ -116,7 +121,9 @@ class MongoStorage(StorageFunctions):
             # Transforma timestamps em strings, se houver
             session = self.date_to_isoformat(session)
 
-            result = self.sessions.insert_one(session)
-            return True, str(result.inserted_id)
+            new_doc = self.database[self.collection_name].insert_one(session)
+            return True, str(new_doc.inserted_id)
+
         except Exception as e:
+            print(f'{e}')
             return False, str(e)

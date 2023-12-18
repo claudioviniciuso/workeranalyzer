@@ -1,8 +1,3 @@
-import os
-
-diretorio_atual = os.getcwd()
-print("Diretório Atual:", diretorio_atual)
-
 from worker_analyzer.storage import MongoStorage
 
 # Connection Dict
@@ -22,10 +17,10 @@ db.connect()
 # return True
 
 session = {
-	"awesomekey", "lorem ipsum value"
+	"somekey": "lorem ipsum value"
 }
 
 
 # Save
-db.save(session)
+print(db.save(session))
 # Return True, ID: xxxxxx-xxxxxx-xxxxxxx

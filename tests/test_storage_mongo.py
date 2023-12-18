@@ -8,7 +8,7 @@ class TestMongoStorage(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Configuração inicial (executada uma vez antes de todos os testes)
+        # Configuração inicial
         cls.connection = {
             "url": "mongodb://localhost:27017/",
             "database": "test_workeranalyser"
@@ -21,7 +21,7 @@ class TestMongoStorage(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        # Limpeza após todos os testes (executada uma vez após todos os testes)
+        # Limpeza após todos os testes
         cls.client.drop_database(cls.connection["database"])
         cls.client.close()
 
@@ -39,7 +39,7 @@ class TestMongoStorage(unittest.TestCase):
     def test_create_connection(self):
         self.storage.create_connection()
         self.assertIsNotNone(self.storage.client)
-        self.assertIsNotNone(self.storage.sessions)
+        self.assertIsNotNone(self.storage.database)
 
 
     def test_test_connection(self):
@@ -52,6 +52,7 @@ class TestMongoStorage(unittest.TestCase):
 
 
     def test_save(self):
+        self.storage.connect()
         session = {"key": "value"}
         success, _ = self.storage.save(session)
         self.assertTrue(success)
