@@ -125,5 +125,4 @@ class MongoStorage(StorageFunctions):
             return True, str(new_doc.inserted_id)
 
         except Exception as e:
-            print(f'{e}')
             return False, str(e)
