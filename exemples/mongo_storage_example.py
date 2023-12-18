@@ -1,8 +1,13 @@
+import os
+
+diretorio_atual = os.getcwd()
+print("Diretório Atual:", diretorio_atual)
+
 from worker_analyzer.storage import MongoStorage
 
 # Connection Dict
 connection = {
-		"url": "mongodb+srv://username:pwd@host/?retryWrites=true&w=majority",
+		"url": "mongodb+srv://testing:q1w2e3r4@localhost:27017/?retryWrites=true&w=majority",
 		"database": "workeranalyzer"
 }
 
@@ -17,7 +22,7 @@ db.connect()
 # return True
 
 session = {
-	"key", "value"
+	"awesomekey", "lorem ipsum value"
 }
 
 
