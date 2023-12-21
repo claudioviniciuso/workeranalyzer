@@ -48,37 +48,50 @@ class MongoStorage(StorageFunctions):
         self.client = None
 
 
-    def extrair_info_url_mongodb(url):
+    def extrair_info_url_mongodb(self, url):
         # Analisa a URL
         parsed_url = urlparse(url)
-
         # Obtém a URL sem o nome do banco de dados
-        url_sem_db = f"{parsed_url.scheme}://{parsed_url.netloc}"
+        url_sem_db = f"{parsed_url.scheme}://{parsed_url.netloc}/"
+
+        if parsed_url.query:
+            url_sem_db += f"?{parsed_url.query}"
 
         # Obtém o nome do banco de dados, se presente
         database = parsed_url.path[1:]  # Ignora a barra inicial
-
+        # print(f"extrair_info_url_mongodb: {url_sem_db}, {database}")
         return url_sem_db, database
 
 
     def create_connection(self):
         ''' Método responsável por criar a cadeia de conexão e acessar client MongoDB.
         '''
+
         if 'url' not in self.connection:
             raise ValueError("Connection dictionary must contain 'url'")
 
         if not self.connection['url']:
             raise ValueError("URL in connection dictionary cannot be null")
 
-        url = self.connection['url']
-        if 'database' not in self.connection:
+        # se database não exister no dict `connection` passado, vai tentar
+        # verificar se existe database na url de `connection`
+        if not 'database' in self.connection:
             url, database = self.extrair_info_url_mongodb(self.connection['url'])
-        else:
+
+            if not database:
+                raise ValueError("Database cannot be empty")
+
+        # Se chegar aqui, significa que passou pelas validações e esta tudo
+        # definido no dict `connection`
+        if 'database' not in locals():
             database = self.connection['database']
+
+        if 'url' not in locals():
+            url = self.connection['url']
 
         try:
             self.client = MongoClient(url)
-            self.database = self.client[self.connection['database']] if not database else self.client[database]
+            self.database = self.client[database]
 
         except Exception as e:
             raise ConnectionError(f"Error creating connection: {str(e)}")
@@ -116,6 +129,9 @@ class MongoStorage(StorageFunctions):
         '''
         if not isinstance(session, dict):
             return False, "Input is not a dictionary"
+
+        if not self.client or (not self.client.is_primary and not self.client.connected):
+            raise Exception("Connection is not active")
 
         try:
             # Transforma timestamps em strings, se houver
